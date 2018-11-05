@@ -8,9 +8,10 @@ import math
 
 def get_coords():
     tmp = []
-    for i in range (1, 6):
+    for i in range(1, 6):
         tmp.append(float(sys.argv[i]))
     return tmp
+
 
 def deg2num(lat_deg, lon_deg, zoom):
     lat_rad = math.radians(lat_deg)
@@ -20,15 +21,18 @@ def deg2num(lat_deg, lon_deg, zoom):
                                 (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
     return (xtile, ytile)
 
+
 def main():
     zoom = int(sys.argv[5])
     start_col = float(sys.argv[1])
     start_row = float(sys.argv[2])
     filename = str(sys.argv[6])
     process_img(start_col, start_row, zoom, filename)
-    
+
+
 def save(mapimg, fn):
     mapimg.save(fn)
+
 
 def process_img(start_col, start_row, zoom, filename):
     user_coords = get_coords()
@@ -39,24 +43,21 @@ def process_img(start_col, start_row, zoom, filename):
 
     mapimg = Image.new("RGB", (cols*256, rows*256))
 
-    start_col = deg_start[0]
-    start_row = deg_start[1]
+    start_col = deg_start[0] + 1
+    start_row = deg_start[1] + 1
 
-    for col in range (start_col, start_col+cols + 1):
-        for row in range(start_row, start_row + rows + 1):
+    for col in range(start_col, start_col+cols):
+        for row in range(start_row, start_row + rows):
             imgdata = urllib.request.urlopen(
-                  "https://tile.openstreetmap.org/{}/{}/{}.png".format(zoom, col, row)).read()
+                "https://tile.openstreetmap.org/{}/{}/{}.png".format(zoom, col, row)).read()
             img = Image.open(BytesIO(imgdata))
-            mapimg.paste(img,((col-start_col)*256, (row-start_row)*256))
+            mapimg.paste(img, ((col-start_col)*256, (row-start_row)*256))
     mapimg
     save(mapimg, filename)
 
 
-
 def get_tile_count(start_deg, end_deg):
-    
-    return end_deg - start_deg 
+    return end_deg - start_deg
+
 
 main()
-
-
