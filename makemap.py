@@ -36,10 +36,17 @@ def process_img(start_col, start_row, zoom, filename):
     deg_end = deg2num(user_coords[2], user_coords[3], user_coords[4])
     cols = get_rows(deg_start[0], deg_end[0])
     rows = get_rows(deg_start[1], deg_end[1])
+
     mapimg = Image.new("RGB", (cols*256, rows*256))
 
-    start_col = int(start_col)
-    start_row = int(start_row)
+    start_col = deg_start[0]
+    start_row = deg_start[1]
+    # print(start_col, start_row)
+
+    # start_col = 9272
+    # start_row = 4616
+    # cols = 6
+    # rows = 4
 
     for col in range (start_col, start_col+cols):
         for row in range(start_row, start_row + rows):
@@ -47,6 +54,7 @@ def process_img(start_col, start_row, zoom, filename):
                   "https://tile.openstreetmap.org/{}/{}/{}.png".format(zoom, col, row)).read()
             img = Image.open(BytesIO(imgdata))
             mapimg.paste(img,((col-start_col)*256, (row-start_row)*256))
+    mapimg
     save(mapimg, filename)
 
 
